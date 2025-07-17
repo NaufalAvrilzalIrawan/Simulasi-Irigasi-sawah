@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Harian - Dashboard Irigasi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Analisis Data Harian</h1>
+            <p>Ringkasan data sejak server dijalankan.</p>
+            <nav>
+                <a href="index.html" class="nav-link">⬅️ Kembali ke Dashboard</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="card-deck">
+                <div class="card">
+                    <h2>Waktu Pompa Aktif</h2>
+                    <p class="data-value" id="total-pump-time">-- detik</p>
+                </div>
+                <div class="card">
+                    <h2>Total Data Terekam</h2>
+                    <p class="data-value" id="total-records">--</p>
+                </div>
+            </div>
+
+            <div class="card-deck">
+                <div class="card">
+                    <h3>Analisis Kelembaban Tanah</h3>
+                    <p>Rata-rata: <strong id="avg-moisture">--</strong> %</p>
+                    <p>Tertinggi: <strong id="max-moisture">--</strong> %</p>
+                    <p>Terendah: <strong id="min-moisture">--</strong> %</p>
+                </div>
+                <div class="card">
+                    <h3>Analisis Ketinggian Air</h3>
+                    <p>Rata-rata: <strong id="avg-level">--</strong> cm</p>
+                    <p>Tertinggi: <strong id="max-level">--</strong> cm</p>
+                    <p>Terendah: <strong id="min-level">--</strong> cm</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="analisis.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Irigasi Cerdas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dashboard Irigasi Sawah Cerdas</h1>
+            <p>Status Real-time dari Edge Gateway</p>
+            <nav>
+                <a href="analisis.html" class="nav-link">Lihat Analisis Harian</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="card-deck">
+                <div class="card">
+                    <h2>💧 Kelembaban Tanah</h2>
+                    <p class="data-value" id="moisture-value">-- %</p>
+                </div>
+                <div class="card">
+                    <h2>🌊 Ketinggian Air</h2>
+                    <p class="data-value" id="level-value">-- cm</p>
+                </div>
+                <div class="card">
+                    <h2>⚙️ Status Pompa</h2>
+                    <div class="status-indicator-container">
+                        <div class="status-indicator" id="pump-indicator"></div>
+                        <p class="data-value" id="pump-state">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card chart-container">
+                <h2>Grafik Sensor</h2>
+                <canvas id="sensorChart"></canvas>
+            </div>
+
+            <div class="card control-panel">
+                <h2>Kontrol Manual</h2>
+                <p>Ambil alih kontrol otomatis dari sistem.</p>
+                <button id="btn-on">Nyalakan Pompa</button>
+                <button id="btn-off">Matikan Pompa</button>
+            </div>
+            
+            <div class="card log-panel">
+                <h2>Log Sistem</h2>
+                <p id="log-message">Menunggu data dari server...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
