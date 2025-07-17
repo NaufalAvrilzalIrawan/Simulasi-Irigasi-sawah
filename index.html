@@ -21,6 +21,7 @@
                 <div class="card">
                     <h2>💧 Kelembaban Tanah</h2>
                     <p class="data-value" id="moisture-value">-- %</p>
+                    <p class="category-text" id="moisture-category">--</p>
                 </div>
                 <div class="card">
                     <h2>🌊 Ketinggian Air</h2>
@@ -35,9 +36,11 @@
                 </div>
             </div>
 
-            <div class="card chart-container">
+            <div class="card">
                 <h2>Grafik Sensor</h2>
-                <canvas id="sensorChart"></canvas>
+                <div class="chart-wrapper">
+                    <canvas id="sensorChart"></canvas>
+                </div>
             </div>
 
             <div class="card control-panel">

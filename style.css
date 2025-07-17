@@ -69,10 +69,19 @@ header h1 {
     box-shadow: 0 0 15px #dc3545;
 }
 
-.chart-container {
-    height: 400px;
-    display: flex;
-    flex-direction: column;
+.chart-wrapper {
+    height: 350px; /* Sedikit mengurangi tinggi untuk memberi ruang */
+    position: relative;
+    margin-top: 15px; /* Memberi jarak dari judul */
+}
+
+.chart-wrapper canvas {
+    /* Aturan ini tetap sama, hanya selectornya yang berubah */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .control-panel button {
@@ -145,3 +154,20 @@ header h1 {
 .nav-link:hover {
     background-color: #0056b3;
 }
+
+.category-text {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    color: white;
+}
+
+/* Warna Latar untuk setiap kategori */
+.cat-sangat-kering { background-color: #A52A2A; } /* Brown */
+.cat-kering { background-color: #D2691E; } /* Chocolate */
+.cat-lembab { background-color: #2E8B57; } /* SeaGreen */
+.cat-basah { background-color: #1E90FF; } /* DodgerBlue */
+.cat-sangat-basah { background-color: #00008B; } /* DarkBlue */

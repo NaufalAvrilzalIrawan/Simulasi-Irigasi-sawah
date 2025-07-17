@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Referensi elemen HTML
     const moistureValueElem = document.getElementById('moisture-value');
+    const moistureCategoryElem = document.getElementById('moisture-category');
     const levelValueElem = document.getElementById('level-value');
     const pumpStateElem = document.getElementById('pump-state');
-    const pumpIndicatorElem = document.getElementById('pump-indicator');
+    const pumpIndicatorElem = document.getElementById('pump-indicator'); // Pastikan ini ada
     const logMessageElem = document.getElementById('log-message');
     const btnOn = document.getElementById('btn-on');
     const btnOff = document.getElementById('btn-off');
-    
-    // BARU: Definisikan ambang batas di frontend
+    // Definisikan ambang batas di frontend
     const WATER_LEVEL_WARNING = 10.0;
     const WATER_LEVEL_EMERGENCY = 15.0;
 
@@ -37,24 +37,28 @@ document.addEventListener('DOMContentLoaded', () => {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 10,
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                }
+            },
             scales: {
-                x: { ticks: { color: '#333' } },
+                x: { ticks: { color: '#333', font: { size: 10 } } },
                 y: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
+                    type: 'linear', display: true, position: 'left',
+                    ticks: { color: '#333', font: { size: 10 } },
                     title: { display: true, text: 'Kelembaban (%)' },
-                    suggestedMin: 0,
-                    suggestedMax: 100
+                    suggestedMin: 0, suggestedMax: 100
                 },
                 y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
+                    type: 'linear', display: true, position: 'right',
+                    ticks: { color: '#333', font: { size: 10 } },
                     title: { display: true, text: 'Ketinggian Air (cm)' },
                     grid: { drawOnChartArea: false },
-                    suggestedMin: 0,
-                    suggestedMax: 20
+                    suggestedMin: 0, suggestedMax: 20
                 }
             }
         }
@@ -68,11 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Update nilai di kartu
             moistureValueElem.textContent = `${data.moisture} %`;
+            moistureCategoryElem.textContent = data.category;
+            updateCategoryStyle(data.category);
+
             levelValueElem.textContent = `${data.level} cm`;
             pumpStateElem.textContent = data.pump_state;
             logMessageElem.textContent = `[${data.timestamp}] ${data.log}`;
             
-            // Update indikator status pompa
+            // LOGIKA PENTING UNTUK INDIKATOR
             if (data.pump_state === 'ON') {
                 pumpIndicatorElem.classList.add('status-on');
                 pumpIndicatorElem.classList.remove('status-off');
@@ -81,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pumpIndicatorElem.classList.remove('status-on');
             }
             
-            // MODIFIKASI: Tambahkan logika untuk tombol ON berdasarkan level air
+            // Tambahkan logika untuk tombol ON berdasarkan level air
             checkWaterLevelAndSetButton(data.level);
 
             // Update data grafik
@@ -93,24 +100,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // BARU: Fungsi untuk mengatur status tombol ON
+    function updateCategoryStyle(category) {
+        const elem = document.getElementById('moisture-category');
+        elem.className = 'category-text';
+        
+        switch (category) {
+            case "Sangat Kering": elem.classList.add('cat-sangat-kering'); break;
+            case "Kering": elem.classList.add('cat-kering'); break;
+            case "Lembab": elem.classList.add('cat-lembab'); break;
+            case "Basah": elem.classList.add('cat-basah'); break;
+            case "Sangat Basah": elem.classList.add('cat-sangat-basah'); break;
+        }
+    }
+    
     function checkWaterLevelAndSetButton(level) {
         // Kondisi darurat: Level air terlalu tinggi
         if (level >= WATER_LEVEL_EMERGENCY) {
-            btnOn.disabled = true; // Nonaktifkan tombol
-            btnOn.classList.remove('btn-warning'); // Hapus class warning jika ada
+            btnOn.disabled = true;
+            btnOn.classList.remove('btn-warning');
             btnOn.title = 'Level air terlalu tinggi! Pompa tidak bisa dinyalakan.';
-        } 
-        // Kondisi peringatan: Level air mendekati batas
-        else if (level >= WATER_LEVEL_WARNING) {
-            btnOn.disabled = false; // Tombol tetap aktif
-            btnOn.classList.add('btn-warning'); // Tambah class warning (warna oranye)
+        } else if (level >= WATER_LEVEL_WARNING) {
+            btnOn.disabled = false;
+            btnOn.classList.add('btn-warning');
             btnOn.title = 'Level air mendekati batas. Gunakan dengan hati-hati.';
-        } 
-        // Kondisi Normal
-        else {
-            btnOn.disabled = false; // Tombol aktif
-            btnOn.classList.remove('btn-warning'); // Hapus class warning
+        } else {
+            btnOn.disabled = false;
+            btnOn.classList.remove('btn-warning');
             btnOn.title = 'Nyalakan pompa secara manual.';
         }
     }

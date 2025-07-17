@@ -7,9 +7,22 @@ import datetime
 app = Flask(__name__)
 CORS(app)
 
-# --- Kelas Simulasi (Tidak berubah) ---
+# BARU: Fungsi untuk menentukan kategori berdasarkan nilai kelembapan
+def get_moisture_category(moisture):
+    if moisture <= 7.7:
+        return "Sangat Kering"
+    elif moisture <= 17.0:
+        return "Kering"
+    elif moisture <= 22.6:
+        return "Lembab"
+    elif moisture <= 27.5:
+        return "Basah"
+    else: # Di atas 27.5% dianggap sangat basah dalam konteks kategori ini
+        return "Sangat Basah"
+
+# --- Kelas Simulasi (Tidak berubah, kecuali EdgeGateway) ---
 class SoilMoistureSensor:
-    def __init__(self): self.current_value = random.uniform(30.0, 50.0)
+    def __init__(self): self.current_value = random.uniform(5.0, 25.0) # Nilai awal disesuaikan
     def read_value(self, pump_is_on=False):
         self.current_value += random.uniform(3.0, 6.0) if pump_is_on else -random.uniform(0.5, 1.5)
         self.current_value = max(0, min(100, self.current_value)); return self.current_value
@@ -29,21 +42,34 @@ class Actuator:
 class EdgeGateway:
     def __init__(self, moisture_sensor, level_sensor, actuator):
         self.moisture_sensor, self.level_sensor, self.actuator = moisture_sensor, level_sensor, actuator
-        self.MOISTURE_LOW_THRESHOLD, self.MOISTURE_HIGH_THRESHOLD, self.LEVEL_EMERGENCY_THRESHOLD = 40.0, 75.0, 15.0
+        # MODIFIKASI: Ambang batas otomatis sekarang berdasarkan kategori
+        self.MOISTURE_AUTO_ON_THRESHOLD = 17.0 # Pompa nyala jika <= 17.0% (Kering atau Sangat Kering)
+        self.MOISTURE_AUTO_OFF_THRESHOLD = 40.0 # Pompa mati jika > 40.0% (dianggap sudah cukup basah)
+        self.LEVEL_EMERGENCY_THRESHOLD = 15.0
         self.log_message = "Sistem Siap."
 
     def run_logic_cycle(self):
         is_pump_on = self.actuator.is_on()
         moisture, level = self.moisture_sensor.read_value(is_pump_on), self.level_sensor.read_value(is_pump_on)
-        self.log_message = f"Otomatis | Kelembaban: {moisture:.1f}%, Level: {level:.1f} cm"
+        category = get_moisture_category(moisture) # BARU
+        self.log_message = f"Otomatis | Kelembaban: {moisture:.1f}% ({category}), Level: {level:.1f} cm"
 
+        # MODIFIKASI: Logika keputusan otomatis disesuaikan
         if level > self.LEVEL_EMERGENCY_THRESHOLD:
             self.actuator.set_state("OFF"); self.log_message = "DARURAT: Level air terlalu tinggi! Pompa dimatikan."
-        elif moisture < self.MOISTURE_LOW_THRESHOLD: self.actuator.set_state("ON")
-        elif moisture > self.MOISTURE_HIGH_THRESHOLD: self.actuator.set_state("OFF")
+        elif moisture <= self.MOISTURE_AUTO_ON_THRESHOLD:
+            self.actuator.set_state("ON")
+        elif moisture > self.MOISTURE_AUTO_OFF_THRESHOLD:
+            self.actuator.set_state("OFF")
         
-        return {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), "moisture": round(moisture, 1),
-                "level": round(level, 1), "pump_state": self.actuator.state, "log": self.log_message}
+        return {
+            "timestamp": datetime.datetime.now().strftime("%H:%M:%S"),
+            "moisture": round(moisture, 1),
+            "level": round(level, 1),
+            "pump_state": self.actuator.state,
+            "log": self.log_message,
+            "category": category # BARU: Kirim kategori ke frontend
+        }
 
 # BARU: Kelas untuk menangani pengumpulan dan analisis data
 class AnalysisHandler:
