@@ -165,6 +165,49 @@ header h1 {
     color: white;
 }
 
+/* Style untuk tombol cetak agar konsisten */
+#btn-cetak {
+    background-color: #6c757d; /* Warna abu-abu */
+    border: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px; /* Sesuaikan ukuran font jika perlu */
+}
+
+#btn-cetak:hover {
+    background-color: #5a6268;
+}
+
+/* Aturan khusus saat mencetak */
+@media print {
+    /* Sembunyikan semua elemen di dalam header saat mencetak */
+    header {
+        display: none;
+    }
+
+    /* Beri sedikit jarak di atas agar tidak terlalu mepet ke tepi halaman */
+    main {
+        margin-top: -50px;
+    }
+    
+    /* Pastikan kartu tidak memiliki bayangan di hasil cetak */
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
+
+/* Style untuk tombol unduh Excel */
+#btn-excel {
+    background-color: #217346; /* Warna hijau khas Excel */
+    border: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+}
+
+#btn-excel:hover {
+    background-color: #185232;
+}
+
 /* Warna Latar untuk setiap kategori */
 .cat-sangat-kering { background-color: #A52A2A; } /* Brown */
 .cat-kering { background-color: #D2691E; } /* Chocolate */
