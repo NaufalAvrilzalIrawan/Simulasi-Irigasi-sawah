@@ -7,7 +7,7 @@ import datetime
 app = Flask(__name__)
 CORS(app)
 
-# BARU: Fungsi untuk menentukan kategori berdasarkan nilai kelembapan
+# --- Fungsi untuk menentukan kategori berdasarkan nilai kelembapan ---
 def get_moisture_category(moisture):
     if moisture <= 7.7:
         return "Sangat Kering"
@@ -42,7 +42,7 @@ class Actuator:
 class EdgeGateway:
     def __init__(self, moisture_sensor, level_sensor, actuator):
         self.moisture_sensor, self.level_sensor, self.actuator = moisture_sensor, level_sensor, actuator
-        # MODIFIKASI: Ambang batas otomatis sekarang berdasarkan kategori
+        # Ambang batas otomatis sekarang berdasarkan kategori
         self.MOISTURE_AUTO_ON_THRESHOLD = 17.0 # Pompa nyala jika <= 17.0% (Kering atau Sangat Kering)
         self.MOISTURE_AUTO_OFF_THRESHOLD = 40.0 # Pompa mati jika > 40.0% (dianggap sudah cukup basah)
         self.LEVEL_EMERGENCY_THRESHOLD = 15.0
@@ -51,10 +51,10 @@ class EdgeGateway:
     def run_logic_cycle(self):
         is_pump_on = self.actuator.is_on()
         moisture, level = self.moisture_sensor.read_value(is_pump_on), self.level_sensor.read_value(is_pump_on)
-        category = get_moisture_category(moisture) # BARU
+        category = get_moisture_category(moisture) 
         self.log_message = f"Otomatis | Kelembaban: {moisture:.1f}% ({category}), Level: {level:.1f} cm"
 
-        # MODIFIKASI: Logika keputusan otomatis disesuaikan
+        # Logika keputusan otomatis disesuaikan
         if level > self.LEVEL_EMERGENCY_THRESHOLD:
             self.actuator.set_state("OFF"); self.log_message = "DARURAT: Level air terlalu tinggi! Pompa dimatikan."
         elif moisture <= self.MOISTURE_AUTO_ON_THRESHOLD:
@@ -68,10 +68,10 @@ class EdgeGateway:
             "level": round(level, 1),
             "pump_state": self.actuator.state,
             "log": self.log_message,
-            "category": category # BARU: Kirim kategori ke frontend
+            "category": category # Kirim kategori ke frontend
         }
 
-# BARU: Kelas untuk menangani pengumpulan dan analisis data
+# --- Kelas untuk menangani pengumpulan dan analisis data ---
 class AnalysisHandler:
     def __init__(self):
         self.session_history = []
@@ -101,13 +101,13 @@ class AnalysisHandler:
 
 # --- Inisialisasi Objek Global ---
 edge_gateway = EdgeGateway(SoilMoistureSensor(), WaterLevelSensor(), Actuator())
-analysis_handler = AnalysisHandler() # BARU
+analysis_handler = AnalysisHandler() # 
 
 # --- API ENDPOINTS ---
 @app.route('/data')
 def get_data():
     current_status = edge_gateway.run_logic_cycle()
-    analysis_handler.add_record(current_status) # MODIFIKASI: Simpan setiap data untuk analisis
+    analysis_handler.add_record(current_status) # Simpan setiap data untuk analisis
     return jsonify(current_status)
 
 @app.route('/control', methods=['POST'])
@@ -120,7 +120,7 @@ def control_pump():
         return jsonify({"status": "success", "new_state": command})
     return jsonify({"status": "failed"}), 400
 
-# BARU: Endpoint untuk halaman analisis
+# --- Endpoint untuk halaman analisis ---
 @app.route('/analysis')
 def get_analysis():
     summary = analysis_handler.calculate_summary()
